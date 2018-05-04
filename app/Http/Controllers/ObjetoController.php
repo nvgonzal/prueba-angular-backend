@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Objeto;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Validator;
 
 class ObjetoController extends Controller
 {
@@ -28,7 +28,14 @@ class ObjetoController extends Controller
     public function store(Request $request)
     {
         try {
-
+            $validador = Validator::make($request->all(),[
+                'nombre' => 'required|min:6',
+                'cantidad' => 'required|numeric'
+            ]);
+            if ($validador->fails()){
+                $mensaje = ['errors' => $validador->messages()];
+                return response()->json($mensaje,422);
+            }
             $objeto = new Objeto();
             $objeto->nombre = $request->nombre;
             $objeto->cantidad = $request->cantidad;
